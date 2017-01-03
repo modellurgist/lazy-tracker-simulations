@@ -11,7 +11,7 @@ class NumberList
     @numbers
   end
 
-  def tally
+  def sum
     @numbers.reduce(&:+)
   end
 end

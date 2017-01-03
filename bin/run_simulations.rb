@@ -10,7 +10,8 @@ simulations.each do |sim|
 
   puts
   puts sim.class.to_s
-  puts sim.variant_description
+  #puts sim.variant_description
+  puts sim.options.inspect
   puts "total_clicks: #{sim.total_clicks}"
   puts "actual sum: #{sim.actual_sum}"
   puts "absolute deviation: #{deviation}"
