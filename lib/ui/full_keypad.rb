@@ -1,11 +1,40 @@
 require_relative '../../lib/money'
 
+# TODO: begin with the end in mind: what graphs to analyze, questions to answer
+#  - how precise today, to be precise enough at end of month (non-adaptive, then later adaptive) -- each valid input set should have a fixed bounded error %
+#  - trade-off between clicks and precision
+#  - larger question:  how much error can/should someone tolerate in their end-of-month numbers?
+#    - what is goal?  get expenses under control or know them exactly?
+#
+# NOTE: precision of input is independent of input interface type!  (that's great, so can decide precision first, and optimize for additional click savings second)
+
+# - anything other than full keypad is to optimize clicks
+# - otherwise, the variants here are sufficient to choose input strings for estimates and calculate precision of the sum of them
+# - just need to generate reasonable, representative ranges to try simulations on
 class FullKeypad
+
+  # need generic way to run through variants
+  # - round to dime
+  # - round to 50 cents
+  # - round to dollar
+  # - round to 2 dollars
+  # - round to 5 dollars
+  # - round to 10 dollars
+  # - round to 20 dollars
+  # - round to 100 dollars
+  # - fibonacci
+  # - base-2: 1, 2, 4, 8, 16, 32, 128, etc.
+  # - only if the above 2 show promise:
+  # - geometric / arithmetic series
+  # - other series (natural?)
+  # - other series
   def self.run_simulations(number_list)
     variants = [
       self.new(number_list, omit_decimal_point: true),
       self.new(number_list),
       self.new(number_list, omit_cents: true)
+      # variant: round to nearest dime
+      # variant: round to nearest dollar
     ]
     variants.each(&:simulate)
     variants

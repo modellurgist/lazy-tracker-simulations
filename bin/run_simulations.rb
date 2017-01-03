@@ -17,3 +17,11 @@ simulations.each do |sim|
   puts "absolute deviation: #{deviation}"
   puts "fraction deviation: #{deviation / sim.actual_sum}"
 end
+
+
+# summary analysis of each variant
+
+
+# summary across variants
+
+  # CSV generator for graphing
