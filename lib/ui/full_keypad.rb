@@ -12,29 +12,11 @@ require_relative '../../lib/money'
 # - otherwise, the variants here are sufficient to choose input strings for estimates and calculate precision of the sum of them
 # - just need to generate reasonable, representative ranges to try simulations on
 class FullKeypad
-
-  # need generic way to run through variants
-  # - round to dime
-  # - round to 50 cents
-  # - round to dollar
-  # - round to 2 dollars
-  # - round to 5 dollars
-  # - round to 10 dollars
-  # - round to 20 dollars
-  # - round to 100 dollars
-  # - fibonacci
-  # - base-2: 1, 2, 4, 8, 16, 32, 128, etc.
-  # - only if the above 2 show promise:
-  # - geometric / arithmetic series
-  # - other series (natural?)
-  # - other series
   def self.run_simulations(number_list)
     variants = [
-      self.new(number_list, omit_decimal_point: true),
-      self.new(number_list),
-      self.new(number_list, omit_cents: true)
-      # variant: round to nearest dime
-      # variant: round to nearest dollar
+      # variant: don't enter trailing zeros (decimal and/or integer)
+      #self.new(number_list, omit_decimal_point: true)#,
+      self.new(number_list)
     ]
     variants.each(&:simulate)
     variants
@@ -61,18 +43,13 @@ class FullKeypad
 
   private
 
-  def parsed_money(number, omit_decimal_point: false, omit_cents: false)
+  def parsed_money(number, omit_decimal_point: false)
     money = Money.build(number)
 
     if omit_decimal_point
       {
         input_string: "#{money.integer_string}#{money.decimal_string}",
         money: money
-      }
-    elsif omit_cents
-      {
-        input_string: money.integer_string,
-        money: Money.build(money.integer_string)
       }
     else
       {

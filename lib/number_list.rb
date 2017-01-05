@@ -1,14 +1,17 @@
 require 'csv'
 
 class NumberList
-  # l = NumberList.new("input_examples/2016-01-food-outside-pinch.csv")
-  def initialize(input_filepath)
+  attr_reader :numbers, :number_strings
+
+  # l = NumberList.build("input_examples/2016-01-food-outside-pinch.csv")
+  def self.build(input_filepath)
     rows = CSV.read(input_filepath)
-    @numbers = rows.first.map(&:to_f)
+    new(rows.first)
   end
 
-  def numbers
-    @numbers
+  def initialize(number_strings)
+    @number_strings = number_strings
+    @numbers = @number_strings.map(&:to_f)
   end
 
   def sum

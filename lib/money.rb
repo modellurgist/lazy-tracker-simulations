@@ -6,7 +6,7 @@ class Money
 
   def self.build(number)
     values = number.to_s.split(".")
-    Money.new(values.first, values.last)
+    Money.new(values.first, values.last[0..1])
   end
 
   def self.sum(monies)
@@ -20,5 +20,13 @@ class Money
     @decimal_string = decimal_string
     @integer = @integer_string.to_i
     @decimal = "0.#{@decimal_string}".to_f
+  end
+
+  def to_s
+    "#{@integer_string}.#{@decimal_string}"
+  end
+
+  def to_f
+    to_s.to_f
   end
 end
