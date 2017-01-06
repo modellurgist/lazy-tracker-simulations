@@ -25,13 +25,17 @@ class FullKeypad
 
   attr_reader :actual_sum,
               :estimated_sum,
-              :total_clicks
+              :total_clicks,
+              :absolute_deviation,
+              :fraction_deviation,
+              :smallest_approximation_increment
 
   def initialize(number_list, approximated_number_list, omit_decimal_point: false)
     @number_list = number_list
     @actual_numbers = number_list.numbers
     @actual_sum = number_list.sum
 
+    @smallest_approximation_increment = 0
     @approximated_number_list = approximated_number_list
     @approximated_numbers = approximated_number_list.numbers
 
@@ -47,6 +51,8 @@ class FullKeypad
   def simulate
     monies = @approximated_numbers.map {|number| Money.build(number) }
     @estimated_sum = Money.sum(monies)
+    @absolute_deviation = (@actual_sum - @estimated_sum).abs
+    @fraction_deviation = @absolute_deviation / @actual_sum
 
     money_input_strings = monies.map {|money| money_input_strings(money)}
     @total_clicks = money_input_strings.map(&:size).reduce(&:+)

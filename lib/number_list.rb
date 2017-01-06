@@ -7,7 +7,7 @@ class NumberList
   # l = NumberList.build("input_examples/2016-01-food-outside-pinch.csv")
   def self.build(input_filepath)
     rows = CSV.read(input_filepath)
-    new(rows.first)
+    [new(rows.first)]
   end
 
   def initialize(number_strings)
