@@ -13,11 +13,11 @@ require_relative '../../lib/approximation/nearest_increment'
 # - otherwise, the variants here are sufficient to choose input strings for estimates and calculate precision of the sum of them
 # - just need to generate reasonable, representative ranges to try simulations on
 class FullKeypad
-  def self.run_simulations(number_list, approximated_number_list)
+  def self.run_simulations(number_list, approximated_number_list, smallest_increment)
     variants = [
       # variant: don't enter trailing zeros (decimal and/or integer)
       #self.new(number_list, omit_decimal_point: true)#,
-      self.new(number_list, approximated_number_list)
+      self.new(number_list, approximated_number_list, smallest_increment)
     ]
     variants.each(&:simulate)
     variants
@@ -28,14 +28,20 @@ class FullKeypad
               :total_clicks,
               :absolute_deviation,
               :fraction_deviation,
-              :smallest_approximation_increment
+              :smallest_approximation_increment,
+              :values_count,
+              :average_value,
+              :value_range_width
 
-  def initialize(number_list, approximated_number_list, omit_decimal_point: false)
+  def initialize(number_list, approximated_number_list, smallest_increment, omit_decimal_point: false)
     @number_list = number_list
     @actual_numbers = number_list.numbers
     @actual_sum = number_list.sum
+    @values_count = @actual_numbers.count
+    @average_value = @actual_sum / @values_count
+    @value_range_width = @actual_numbers.max - @actual_numbers.min
 
-    @smallest_approximation_increment = 0
+    @smallest_approximation_increment = smallest_increment
     @approximated_number_list = approximated_number_list
     @approximated_numbers = approximated_number_list.numbers
 

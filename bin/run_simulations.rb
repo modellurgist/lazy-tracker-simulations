@@ -68,10 +68,10 @@ def summarize_results(simulation)
     simulation.fraction_deviation,
     simulation.absolute_deviation,
     simulation.actual_sum,
-    simulation.estimated_sum
-    # number values
-    # average value
-    # value range width
+    simulation.estimated_sum,
+    simulation.values_count,
+    simulation.average_value,
+    simulation.value_range_width
   ]
 end
 
@@ -97,7 +97,7 @@ simulations = number_lists.map do |number_list|
     approximate_numbers = build_approximate_numbers(number_list, smallest_increment)
     approximate_number_list = NumberList.new(approximate_numbers.map(&:to_s))
 
-    simulations = FullKeypad.run_simulations(number_list, approximate_number_list)
+    simulations = FullKeypad.run_simulations(number_list, approximate_number_list, smallest_increment)
     simulations.first
   end
 end.flatten
