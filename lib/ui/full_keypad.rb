@@ -45,28 +45,20 @@ class FullKeypad
   end
 
   def simulate
-    parsed_monies = @approximated_numbers.map {|number| parsed_money(number) }
-    monies = parsed_monies.map {|parsed_money| parsed_money[:money]}
+    monies = @approximated_numbers.map {|number| Money.build(number) }
     @estimated_sum = Money.sum(monies)
 
-    @total_clicks = parsed_monies.map {|parsed_money| parsed_money[:input_string].size }.reduce(&:+)
+    money_input_strings = monies.map {|money| money_input_strings(money)}
+    @total_clicks = money_input_strings.map(&:size).reduce(&:+)
   end
 
   private
 
-  def parsed_money(number)
-    money = Money.build(number)
-
+  def money_input_strings(money)
+    money_string = money.to_s
     if @omit_decimal_point
-      {
-        input_string: "#{money.integer_string}#{money.decimal_string}",
-        money: money
-      }
-    else
-      {
-        input_string: number.to_s,
-        money: money
-      }
+      money_string.delete(".")
     end
+    money_string
   end
 end

@@ -23,7 +23,8 @@ class Money
   end
 
   def to_s
-    "#{@integer_string}.#{@decimal_string}"
+    decimal = ".#{@decimal_string}" if @decimal > 0
+    "#{@integer_string}#{decimal}"
   end
 
   def to_f

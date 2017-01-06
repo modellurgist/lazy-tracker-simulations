@@ -44,15 +44,12 @@ end
 
 puts
 puts
-puts "original data"
-p number_list.numbers
-puts
 
 report_simulations_run(simulations)
 
 # summary analysis of each variant (Full Keypad, with decimal point)
 
-[0.1, 0.5, 1, 2, 5, 10, 20, 100].map do |smallest_increment|
+[0.01, 0.1, 0.5, 1, 2, 5, 10, 20, 100].map do |smallest_increment|
 
   approximation = Approximation::NearestIncrement.new(smallest_increment)
   include_decimal = smallest_increment < 1.0
