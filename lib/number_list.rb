@@ -1,7 +1,8 @@
 require 'csv'
 
 class NumberList
-  attr_reader :numbers, :number_strings
+  attr_reader :numbers,
+              :number_strings
 
   # l = NumberList.build("input_examples/2016-01-food-outside-pinch.csv")
   def self.build(input_filepath)

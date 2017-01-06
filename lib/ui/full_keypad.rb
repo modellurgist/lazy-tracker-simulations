@@ -1,4 +1,5 @@
 require_relative '../../lib/money'
+require_relative '../../lib/approximation/nearest_increment'
 
 # TODO: begin with the end in mind: what graphs to analyze, questions to answer
 #  - how precise today, to be precise enough at end of month (non-adaptive, then later adaptive) -- each valid input set should have a fixed bounded error %
@@ -12,11 +13,11 @@ require_relative '../../lib/money'
 # - otherwise, the variants here are sufficient to choose input strings for estimates and calculate precision of the sum of them
 # - just need to generate reasonable, representative ranges to try simulations on
 class FullKeypad
-  def self.run_simulations(number_list)
+  def self.run_simulations(number_list, approximated_number_list)
     variants = [
       # variant: don't enter trailing zeros (decimal and/or integer)
       #self.new(number_list, omit_decimal_point: true)#,
-      self.new(number_list)
+      self.new(number_list, approximated_number_list)
     ]
     variants.each(&:simulate)
     variants
@@ -24,29 +25,39 @@ class FullKeypad
 
   attr_reader :actual_sum,
               :estimated_sum,
-              :options,
               :total_clicks
 
-  def initialize(number_list, options = {})
-    @numbers = number_list.numbers
+  def initialize(number_list, approximated_number_list, omit_decimal_point: false)
+    @number_list = number_list
+    @actual_numbers = number_list.numbers
     @actual_sum = number_list.sum
-    @options = options
+
+    @approximated_number_list = approximated_number_list
+    @approximated_numbers = approximated_number_list.numbers
+
+    @omit_decimal_point = omit_decimal_point
+  end
+
+  def options
+    {
+      omit_decimal_point: @omit_decimal_point
+    }
   end
 
   def simulate
-    parsed_monies = @numbers.map {|number| parsed_money(number, @options) }
+    parsed_monies = @approximated_numbers.map {|number| parsed_money(number) }
     monies = parsed_monies.map {|parsed_money| parsed_money[:money]}
-
     @estimated_sum = Money.sum(monies)
+
     @total_clicks = parsed_monies.map {|parsed_money| parsed_money[:input_string].size }.reduce(&:+)
   end
 
   private
 
-  def parsed_money(number, omit_decimal_point: false)
+  def parsed_money(number)
     money = Money.build(number)
 
-    if omit_decimal_point
+    if @omit_decimal_point
       {
         input_string: "#{money.integer_string}#{money.decimal_string}",
         money: money

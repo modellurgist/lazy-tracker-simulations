@@ -1,6 +1,7 @@
 require_relative '../lib/money'
 require_relative '../lib/number_list'
-require_relative '../lib/ui/full_keypad.rb'
+require_relative '../lib/ui/full_keypad'
+require_relative '../lib/approximation/nearest_increment'
 
 number_list = NumberList.build("input_examples/2016-01-food-outside-pinch.csv")
 
@@ -23,7 +24,7 @@ number_list = NumberList.build("input_examples/2016-01-food-outside-pinch.csv")
 # partial keypad simulations
 
 # full keypad simulations
-simulations = FullKeypad.run_simulations(number_list)
+simulations = FullKeypad.run_simulations(number_list, number_list)
 
 def report_simulations_run(simulations)
   simulations.each do |sim|
@@ -41,47 +42,37 @@ def report_simulations_run(simulations)
   end
 end
 
-report_simulations_run(simulations)
-
-# summary analysis of each variant (Full Keypad, with decimal point)
-labels = ["Granularity", "Total Clicks", "Fraction Deviation", "Absolute Deviation", "Actual Total", "Estimated Total", "Number of Values", "Average Value", "Value Range Width"]
-
-module Approximation
-  class NearestIncrement
-    # Ex: 0.1, 1, 2, 20
-    def initialize(increment)
-      @increment = increment
-    end
-
-    def round(number, include_decimal: true)
-      number_of_multiples = (number / @increment).round
-      # look at number of multiples (relates to click count)
-      approximation = number_of_multiples * @increment
-      money = Money.build(approximation)
-      include_decimal ? money.to_f : money.integer
-    end
-  end
-end
-
+puts
+puts
 puts "original data"
 p number_list.numbers
 puts
 
+report_simulations_run(simulations)
+
+# summary analysis of each variant (Full Keypad, with decimal point)
+
 [0.1, 0.5, 1, 2, 5, 10, 20, 100].map do |smallest_increment|
-  include_decimal = smallest_increment < 1.0
+
   approximation = Approximation::NearestIncrement.new(smallest_increment)
+  include_decimal = smallest_increment < 1.0
+
   approximate_numbers = number_list.numbers.map do |number|
     approximation.round(number, include_decimal: include_decimal)
   end
 
   approximate_number_list = NumberList.new(approximate_numbers.map(&:to_s))
-  simulations = FullKeypad.run_simulations(approximate_number_list)
+
+  simulations = FullKeypad.run_simulations(number_list, approximate_number_list)
+  puts
+  puts
+  puts "#{smallest_increment}:  "
+  print approximate_numbers.inspect
+  puts
   report_simulations_run(simulations)
-  #puts "#{smallest_increment}:  "
-  #print approximate_numbers.inspect
-  #puts
 end
 
 # summary across variants
 
   # CSV generator for graphing
+labels = ["Granularity", "Total Clicks", "Fraction Deviation", "Absolute Deviation", "Actual Total", "Estimated Total", "Number of Values", "Average Value", "Value Range Width"]
